@@ -1,7 +1,7 @@
 #ifndef MY_FUNCTION_HPP
 #define MY_FUNCTION_HPP
 
-template<typename T>
+template<typename>
 class my_function;
 
 template<typename R, typename... Args>
