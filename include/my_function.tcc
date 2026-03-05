@@ -3,7 +3,7 @@
 
 template<typename R, typename... Args>
 template<typename D>
-void *my_function<R(Args...)>::copy(void *const obj) noexcept(noexcept(std::is_nothrow_copy_constructible_v<R>)) {
+void *my_function<R(Args...)>::copy(void *const obj) noexcept(noexcept(std::is_nothrow_copy_constructible_v<D>)) {
     if (obj) return new D(const_cast<const D&>(*static_cast<D *>(obj)));
     return nullptr;
 }
