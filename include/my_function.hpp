@@ -12,10 +12,10 @@ class my_function<R(Args...)> {
     R (*invoker)(void *, Args&&...){nullptr};
 
     template<typename D>
-    static void *copy(void *obj) noexcept(noexcept(std::is_nothrow_copy_constructible_v<D>));
+    static void *copy(void *obj);
 
     template<typename D>
-    static void destruct(void *obj) noexcept(noexcept(std::is_nothrow_destructible_v<D>));
+    static void destruct(void *obj) noexcept(std::is_nothrow_destructible_v<D>);
 
     template<typename D>
     static R invoke(void *obj, Args&&... args);
