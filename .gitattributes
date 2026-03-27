@@ -1,4 +1,0 @@
-include/* linguist-documentation=false
-include/* linguist-vendored=false
-*.tcc linguist-language=C++
-*.hpp linguist-language=C++
