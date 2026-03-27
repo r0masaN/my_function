@@ -4,20 +4,23 @@
 template<typename R, typename... Args>
 template<typename D>
 void *my_function<R(Args...)>::copy(void *const obj) {
-    if (obj) return new D(const_cast<const D&>(*static_cast<D *>(obj)));
+    if (obj) [[likely]]
+        return new D(const_cast<const D&>(*static_cast<D *>(obj)));
     return nullptr;
 }
 
 template<typename R, typename... Args>
 template<typename D>
 void my_function<R(Args...)>::destruct(void *const obj) noexcept(std::is_nothrow_destructible_v<D>) {
-    if (obj) delete static_cast<D *>(obj);
+    if (obj) [[likely]]
+        delete static_cast<D *>(obj);
 }
 
 template<typename R, typename... Args>
 template<typename D>
 R my_function<R(Args...)>::invoke(void *const obj, Args&&... args) {
-    if (obj) return (*static_cast<D *>(obj))(std::forward<Args>(args)...);
+    if (obj) [[likely]]
+        return (*static_cast<D *>(obj))(std::forward<Args>(args)...);
     throw std::invalid_argument("can't invoke an empty my_function");
 }
 
@@ -48,13 +51,14 @@ my_function<R(Args...)>::my_function(my_function&& other) noexcept :
 
 template<typename R, typename... Args>
 my_function<R(Args...)>::~my_function() noexcept(noexcept(deleter(obj))) {
-    if (obj && deleter) (*deleter)(obj);
+    if (obj && deleter) [[likely]]
+        (*deleter)(obj);
 }
 
 template<typename R, typename... Args>
 my_function<R(Args...)>& my_function<R(Args...)>::operator=(const my_function& other)
     noexcept(noexcept((*deleter)(obj)) && noexcept(noexcept((*copier)(obj)))) {
-    if (this != &other) {
+    if (this != &other) [[likely]] {
         my_function temp{other};
         std::swap(*this, temp);
     }
@@ -64,7 +68,7 @@ my_function<R(Args...)>& my_function<R(Args...)>::operator=(const my_function& o
 
 template<typename R, typename... Args>
 my_function<R(Args...)>& my_function<R(Args...)>::operator=(my_function&& other) noexcept {
-    if (this != &other) {
+    if (this != &other) [[likely]] {
         my_function temp{std::move(other)};
         std::swap(*this, temp);
     }
@@ -74,7 +78,8 @@ my_function<R(Args...)>& my_function<R(Args...)>::operator=(my_function&& other)
 
 template<typename R, typename... Args>
 R my_function<R(Args...)>::operator()(Args&&... args) const {
-    if (invoker && obj) return (*invoker)(obj, std::forward<Args>(args)...);
+    if (invoker && obj) [[likely]]
+        return (*invoker)(obj, std::forward<Args>(args)...);
     throw std::invalid_argument("can't invoke an empty my_function");
 }
 
